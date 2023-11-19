@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 
 class Program
 {
@@ -20,7 +21,7 @@ class Program
         users.Add(new User(1, "Jiramet", "asdfghjkl", 19, "0610614617", "Image", "jib8147@gmail.com"));
         users.Add(new User(2, "Yomu", "qwerty", 19, "0610614617", "Image", "jib8147@gmail.com"));
         users.Add(new User(3, "Akira", "zxcvbnm", 19, "0610614617", "Image", "jib8147@gmail.com"));
-        users.Add(new User(3, "jiramet", "qazwsx", 18, "0610614617", "Image", "jib8147@gmail.com"));
+        users.Add(new User(4, "jiramet", "qazwsx", 18, "0610614617", "Image", "jib8147@gmail.com"));
         return users;
     }
 
@@ -289,9 +290,85 @@ class Program
         return false;
     }
 
+    public static void Chat(List<User> users, List<Pet> pets, User currentUser)
+    {
+        ConsoleKeyInfo key;
+        Console.WriteLine("||======Search User You Want To Chat======||");
+        Console.WriteLine("||-[Esc to Exit]--------------------------||");
+        Console.Write("||Keyword : ");
+        string keyword = Console.ReadLine();
+        Console.WriteLine("||----------------------------------------||");
+        bool check = true;
+        while (check)
+        {
+            foreach (User user in users)
+            {
+                User Find = Search(keyword, user);
+                if (Find != null)
+                {
+                    Console.WriteLine("You are current chat with " + user.Username);
+                }
+            }
+
+            if (Search(keyword, users[users.Count - 1]) == null && check)
+            {
+                Console.WriteLine("||Not Found!!");
+                check = false;
+            }
+
+        }
+        Console.WriteLine("||===============End of Search============||");
+        do
+        {
+            key = Console.ReadKey();
+            Home(users, pets, currentUser);
+        } while (key.Key != ConsoleKey.Escape);
+    }
+
+    public static void GroupChat(List<User> users, List<Pet> pets, User currentUser)
+    {
+        List<string> groupMember = new List<string>();
+        ConsoleKeyInfo key;
+        do
+        {
+            Console.WriteLine("||Search User You Want To Add To Group Chat||");
+            Console.WriteLine("||-[Esc to Exit]--------------------------||");
+            Console.Write("||Keyword : ");
+            string keyword = Console.ReadLine();
+            Console.WriteLine("||----------------------------------------||");
+            bool check = true;
+            while (check)
+            {
+                foreach (User user in users)
+                {
+                    User Find = Search(keyword, user);
+                    if (Find != null)
+                    {
+                        groupMember.Add(user.Username);
+                        Console.WriteLine("Current Member In Group Chat :");
+                        foreach(string member in groupMember)
+                        {
+                            Console.WriteLine(member);
+                        }
+                    }
+                }
+
+                if (Search(keyword, users[users.Count - 1]) == null && check)
+                {
+                    Console.WriteLine("||Not Found!!");
+                    check = false;
+                }
+
+            }
+            Console.WriteLine("||===============End of Search============||");
+            key = Console.ReadKey();
+            Home(users, pets, currentUser);
+        } while (key.Key != ConsoleKey.Escape);
+    }
+
     public static void Home(List<User> users, List<Pet> pets, User user)
     {
-        string[] options = { "Search", "Feed", "Profile", "Match" };
+        string[] options = { "Search", "Feed", "Profile", "Match","Chat","Group" };
         int selectedIndex = 0;
         ConsoleKeyInfo key;
 
@@ -343,6 +420,14 @@ class Program
         else if (options[selectedIndex].Contains("Profile"))
         {
             Profile(users, pets, user);
+        }
+        else if (options[selectedIndex].Contains("Chat"))
+        {
+            Chat(users, pets, user);
+        }
+        else if (options[selectedIndex].Contains("Group"))
+        {
+            GroupChat(users, pets, user);
         }
         else
         {
